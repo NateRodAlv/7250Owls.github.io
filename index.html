@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7250 // MEDIA HUB</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">TEAM <span>7250</span></div>
+    <ul class="nav-links">
+        <li><a href="#" class="nav-item active" onclick="showSection('about')">ABOUT US</a></li>
+        <li><a href="#" class="nav-item" onclick="showSection('clips')">CLIPS</a></li>
+        <li><a href="#" class="nav-item" onclick="showSection('stats')">SEASON STATS</a></li>
+    </ul>
+    <div class="status-indicator">SYSTEMS ONLINE</div>
+</nav>
+
+<main class="container">
+    <section id="about" class="content-section">
+        <h2 class="section-title">MISSION PROFILE: <span class="highlight">7250</span></h2>
+        <div class="about-card">
+            <p>Team 7250 is a high-school FRC robotics team dedicated to engineering excellence, sportsmanship, and community outreach.</p>
+            <div class="specs-grid">
+                <div class="spec-item"><strong>Location:</strong> Oscoda, MI</div>
+                <div class="spec-item"><strong>Rookie Year:</strong> 2018</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="clips" class="content-section" style="display:none;">
+        <h2 class="section-title">MISSION LOG: <span class="highlight"></span></h2>
+        <div class="video-grid">
+            <div class="video-card">
+                <div class="video-container">
+                    <iframe width="1905" height="822" src="https://www.youtube.com/embed/_mpREgiWYqo" title="Team 7250 Robot Reveal 2026" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <div class="video-info">
+                    <h3>Robot Reveal</h3>
+                    <p>Pre-Season Teaser</p>
+                </div>
+            </div>
+            <div class="video-card">
+                <div class="video-container">
+
+                    <iframe width="1063" height="606" src="https://www.youtube.com/embed/eliQys7xJJ4" title="Match 10 (R3) - FIM District Lake City Event presented by AT&amp;T" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <div class="video-info">
+                    <h3>7250 and Alliance 8 upset Alliance 2 at Lake City</h3>
+                    <p>2026 Season Footage</p>
+                </div>
+            </div>
+            <div class="video-card">
+                <div class="video-container">
+                    <iframe width="1905" height="822" src="https://www.youtube.com/embed/4Qal2znCBUk" title="Driver gets hit in the face with fuel (slow mo)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <div class="video-info">
+                    <h3>Robot Reveal</h3>
+                    <p>Pre-Season Teaser</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="stats" class="content-section" style="display:none;">
+        <h2 class="section-title">THE BLUE ALLIANCE <span class="highlight">DATA SYNC</span></h2>
+        <div id="stats-container" class="stats-grid">
+            <p id="loading-text">INITIALIZING API HANDSHAKE...</p>
+        </div>
+    </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

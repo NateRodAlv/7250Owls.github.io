@@ -12,6 +12,13 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Global Image Safety Net */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 body {
     background-color: var(--black);
     background-image:
@@ -34,17 +41,25 @@ body {
 
 .nav-brand-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 20px; }
 
-.social-links { display: flex; gap: 15px; }
+.social-links { display: flex; gap: 15px; flex-shrink: 0; }
 .social-links a { color: var(--white); font-size: 1.2rem; opacity: 0.6; transition: 0.3s; }
 .social-links a:hover { opacity: 1; color: var(--neon-blue); }
 
 .nav-marquee { flex-grow: 1; overflow: hidden; mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); max-width: 50%; display: flex; }
 .nav-marquee-content { display: flex; gap: 4rem; align-items: center; white-space: nowrap; width: max-content; }
-.nav-marquee-content img { height: 22px; width: auto; opacity: 0.5; filter: grayscale(1); }
+
+/* MARQUEE IMAGE FIX: Locked height ensures they don't blow up */
+.nav-marquee-content img {
+    height: 25px !important;
+    width: auto !important;
+    opacity: 0.5;
+    filter: grayscale(1);
+    object-fit: contain;
+}
 
 @keyframes navScroll { from { transform: translateX(0); } to { transform: translateX(var(--scroll-distance)); } }
 
-.logo-group { display: flex; align-items: center; gap: 12px; }
+.logo-group { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .logo { font-family: var(--robot-font); font-size: 1.1rem; letter-spacing: 1px; }
 .logo span { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
 .nav-logo-right { height: 32px; width: auto; filter: drop-shadow(0 0 5px var(--neon-blue)); }
@@ -68,25 +83,28 @@ body {
 .spec-item { background: rgba(0, 94, 255, 0.1); padding: 12px 18px; border-radius: 4px; border: 1px solid var(--royal-blue); font-family: var(--robot-font); font-size: 0.85rem; text-align: center; }
 .spec-item strong { color: var(--neon-blue); display: block; font-size: 0.7rem; }
 
-/* --- ABOUT IMAGES (RESPONSIVE FIX) --- */
+/* --- ABOUT IMAGES (RE-RE-FIXED) --- */
 .about-narrative { border-top: 1px solid #333; padding-top: 2rem; color: #ccc; }
 .about-narrative p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; }
-.about-image-block { margin-bottom: 2rem; text-align: center; width: 100%; }
+.about-image-block { margin-bottom: 2rem; text-align: center; width: 100%; overflow: hidden; }
 
-/* This ensures images never exceed their container and scale down smoothly */
+/* FORCED CONSTRAINTS: This will stop them from going outside the box on mobile */
 .narrative-image {
-    width: 100%;
-    max-width: 800px; /* PC Limit */
-    height: auto;
+    display: block;
+    margin: 0 auto;
+    width: 100% !important;
+    max-width: 800px !important;
+    height: auto !important;
     border-radius: 4px;
     border: 1px solid #444;
-    display: inline-block;
 }
 
-.robot-image { max-width: 600px; } /* Robot stays slightly smaller on PC */
+/* Robot stays slightly smaller but still responsive */
+.robot-image { max-width: 500px !important; }
+
 .image-caption { font-family: var(--robot-font); font-size: 0.7rem; color: #888; margin-top: 8px; letter-spacing: 1px; }
 
-/* --- CLIPS & EVENTS (PREVIOUS LOGIC) --- */
+/* --- CLIPS & EVENTS --- */
 .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
 .video-card-link { text-decoration: none; color: inherit; display: block; }
 .video-card { background: rgba(18, 18, 18, 0.9); border: 1px solid #333; padding: 15px; border-radius: 8px; transition: 0.3s; }
@@ -109,18 +127,19 @@ body {
 
 /* --- MOBILE SPECIFIC OVERRIDES --- */
 @media (max-width: 768px) {
-    .nav-brand-row { flex-direction: column; text-align: center; }
-    .nav-marquee { max-width: 90%; margin: 10px 0; }
-    .nav-marquee-content img { height: 16px; } /* Shrink sponsor logos on mobile */
+    .nav-brand-row { flex-direction: column; text-align: center; gap: 10px; }
+    .nav-marquee { max-width: 100%; margin: 10px 0; order: 3; }
+    .logo-group { order: 1; }
+    .social-links { order: 2; }
 
-    .specs-grid { grid-template-columns: 1fr; } /* Stack the 3 bubbles */
+    .nav-marquee-content img { height: 20px !important; } /* Extra small marquee for mobile */
 
+    .specs-grid { grid-template-columns: 1fr; }
     .container { padding: 1.5rem 4%; }
-
-    .report-grid { grid-template-columns: 1fr; } /* Stack Event stats */
+    .report-grid { grid-template-columns: 1fr; }
 
     .narrative-image {
-        width: 100%; /* Forces image to fit screen width */
-        max-width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
     }
 }

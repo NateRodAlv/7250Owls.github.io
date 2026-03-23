@@ -2,6 +2,17 @@ const TBA_API_KEY = 'Imp1K3Z8VHhPqSpujx5KjiR1nJhTGCL5RA6WyhAqFV1RyRVcwfxQFwezyEu
 const TEAM_KEY = 'frc7250';
 const CURRENT_YEAR = new Date().getFullYear();
 
+function toggleMatches(btn) {
+    const container = btn.closest('.report-section').querySelector('.matches-container');
+    if (container.style.display === 'none') {
+        container.style.display = 'block';
+        btn.textContent = '▲';
+    } else {
+        container.style.display = 'none';
+        btn.textContent = '▼';
+    }
+}
+
 function initMarquee() {
     const content = document.getElementById('marquee-content');
     if (!content) return;
@@ -15,6 +26,8 @@ function initMarquee() {
         content.style.animation = "navScroll 30s linear infinite";
     });
 }
+
+initMarquee();
 
 function showSection(sectionId) {
     const sections = document.querySelectorAll('.content-section');
@@ -71,17 +84,29 @@ async function fetchTeamStats() {
             const awards = await awardsRes.json();
 
             const teamMatches = matches.filter(m => m.alliances.blue.team_keys.includes(TEAM_KEY) || m.alliances.red.team_keys.includes(TEAM_KEY));
-            const matchRows = teamMatches
-                .sort((a, b) => a.time - b.time)
-                .map(m => {
-                    const isBlue = m.alliances.blue.team_keys.includes(TEAM_KEY);
-                    const myScore = isBlue ? m.alliances.blue.score : m.alliances.red.score;
-                    const oppScore = isBlue ? m.alliances.red.score : m.alliances.blue.score;
-                    const resultClass = (myScore > oppScore) ? 'win' : (myScore < oppScore ? 'loss' : '');
-                    let level = m.comp_level.toUpperCase();
-                    let displayNum = (level !== 'QM') ? `${m.set_number}-${m.match_number}` : m.match_number;
-                    return `<span class="match-badge ${resultClass}">${level}${displayNum}: ${myScore}-${oppScore}</span>`;
-                }).join('');
+            const sortedMatches = teamMatches.sort((a, b) => a.time - b.time);
+            
+            const qualMatches = sortedMatches.filter(m => m.comp_level === 'qm').map(m => {
+                const isBlue = m.alliances.blue.team_keys.includes(TEAM_KEY);
+                const alliance = isBlue ? 'BLUE' : 'RED';
+                const myScore = isBlue ? m.alliances.blue.score : m.alliances.red.score;
+                const oppScore = isBlue ? m.alliances.red.score : m.alliances.blue.score;
+                const resultClass = (myScore > oppScore) ? 'win' : (myScore < oppScore ? 'loss' : '');
+                const videoLink = m.videos && m.videos.length > 0 ? `<a href="https://www.youtube.com/watch?v=${m.videos[0].key}" target="_blank" class="video-link">▶</a>` : '';
+                return `<div class="match-card-wrapper"><span class="match-badge ${resultClass}">Q${m.match_number}<br>[${alliance}]<br>${myScore}-${oppScore}</span>${videoLink}</div>`;
+            }).join('');
+            
+            const playoffMatches = sortedMatches.filter(m => m.comp_level !== 'qm').map(m => {
+                const isBlue = m.alliances.blue.team_keys.includes(TEAM_KEY);
+                const alliance = isBlue ? 'BLUE' : 'RED';
+                const myScore = isBlue ? m.alliances.blue.score : m.alliances.red.score;
+                const oppScore = isBlue ? m.alliances.red.score : m.alliances.blue.score;
+                const resultClass = (myScore > oppScore) ? 'win' : (myScore < oppScore ? 'loss' : '');
+                let level = m.comp_level.toUpperCase();
+                let displayNum = `${m.set_number}-${m.match_number}`;
+                const videoLink = m.videos && m.videos.length > 0 ? `<a href="https://www.youtube.com/watch?v=${m.videos[0].key}" target="_blank" class="video-link">▶</a>` : '';
+                return `<div class="match-card-wrapper"><span class="match-badge ${resultClass}">${level}${displayNum}<br>[${alliance}]<br>${myScore}-${oppScore}</span>${videoLink}</div>`;
+            }).join('');
 
             let finish = "Qualifications";
             let playoffRecord = "0W-0L";
@@ -102,17 +127,24 @@ async function fetchTeamStats() {
                     <h3 style="font-family:var(--robot-font); color:var(--neon-blue);">${event.name}</h3>
                     <div class="report-grid">
                         <div class="report-section">
-                            <h4>QUALIFICATIONS</h4>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4>QUALIFICATIONS</h4>
+                                ${qualMatches ? `<button class="toggle-btn" onclick="toggleMatches(this)">▼</button>` : ''}
+                            </div>
                             <p>Rank: <strong>${status?.qual?.ranking?.rank || 'N/A'}</strong></p>
                             <p>Record: <strong>${status?.qual?.ranking?.record?.wins || 0}W-${status?.qual?.ranking?.record?.losses || 0}L</strong></p>
+                            ${qualMatches ? `<div class="matches-container" style="display: none; margin-top: 10px;"><div class="match-scroll">${qualMatches}</div></div>` : ''}
                         </div>
                         <div class="report-section">
-                            <h4>PLAYOFFS</h4>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4>PLAYOFFS</h4>
+                                ${playoffMatches ? `<button class="toggle-btn" onclick="toggleMatches(this)">▼</button>` : ''}
+                            </div>
                             <p>Finish: <strong>${finish}</strong></p>
                             <p>Record: <strong>${playoffRecord}</strong></p>
+                            ${playoffMatches ? `<div class="matches-container" style="display: none; margin-top: 10px;"><div class="match-scroll">${playoffMatches}</div></div>` : ''}
                         </div>
                     </div>
-                    <div class="match-scroll">${matchRows || 'No match data...'}</div>
                     <div class="awards-container">${awardTags}</div>
                     <div class="external-links">
                         <a href="https://www.thebluealliance.com/event/${event.key}" target="_blank" class="btn-link">TBA</a>

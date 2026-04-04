@@ -37,7 +37,7 @@ async function fetchData() {
         if (data.length === 0) {
             container.innerHTML = "<p>No blog posts found. Please reload, or try later.</p>";
         } else {
-            const html = data.map(row => {
+            const html = data.toReversed().map(row => {
                 const genreIcons = {
                     'Mechanical': '⚙️',
                     'Electrical': '⚡',

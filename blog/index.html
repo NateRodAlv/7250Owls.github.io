@@ -55,6 +55,10 @@
   <!-- ===================== END NAVBAR ===================== -->
 
   <main class="blog-main">
+    <div id="blog-search-wrapper">
+      <input type="text" id="blog-search" placeholder="SEARCH POSTS..." autocomplete="off" spellcheck="false">
+      <span id="blog-search-count"></span>
+    </div>
     <div id="container"></div>
     <div id="alert" class="alert"></div>
   </main>
@@ -63,7 +67,7 @@
   <script type="module" src="main.js"></script>
 
   <script>
-    // Sync hash-based nav with navbar active state
+    // ---- Nav active state ----
     function showBlogView(view) {
       document.querySelectorAll('.nav-links .nav-item').forEach(el => el.classList.remove('active'));
       const target = document.getElementById('nav-' + view);
@@ -75,7 +79,6 @@
       }
     }
 
-    // Keep nav in sync when hash changes (e.g. back button, or main.js redirecting to #login)
     window.addEventListener('hashchange', () => {
       const hash = window.location.hash;
       document.querySelectorAll('.nav-links .nav-item').forEach(el => el.classList.remove('active'));
@@ -86,7 +89,50 @@
         const target = document.getElementById('nav-' + view);
         if (target) target.classList.add('active');
       }
+      updateSearchVisibility();
     });
+
+    // ---- Search ----
+    const searchWrapper = document.getElementById('blog-search-wrapper');
+    const searchInput   = document.getElementById('blog-search');
+    const searchCount   = document.getElementById('blog-search-count');
+
+    function filterPosts(query) {
+      const cards = document.querySelectorAll('#container .post-card');
+      if (!cards.length) return;
+      const q = query.toLowerCase().trim();
+      let visible = 0;
+      cards.forEach(card => {
+        const match = !q || card.textContent.toLowerCase().includes(q);
+        card.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      if (q) {
+        searchCount.textContent = visible + ' result' + (visible !== 1 ? 's' : '');
+        searchCount.style.display = 'inline';
+      } else {
+        searchCount.style.display = 'none';
+      }
+    }
+
+    searchInput.addEventListener('input', () => filterPosts(searchInput.value));
+
+    // Hide search on upload/login views
+    function updateSearchVisibility() {
+      const hash = window.location.hash;
+      const hide = hash === '#upload' || hash === '#login';
+      searchWrapper.style.display = hide ? 'none' : '';
+      if (hide) {
+        searchInput.value = '';
+        searchCount.style.display = 'none';
+      }
+    }
+
+    // Re-apply filter when main.js repopulates #container
+    const observer = new MutationObserver(() => filterPosts(searchInput.value));
+    observer.observe(document.getElementById('container'), { childList: true });
+
+    updateSearchVisibility();
   </script>
 
 </body>

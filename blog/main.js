@@ -29,7 +29,7 @@ async function fetchData() {
             indexPage = false;
         }
 
-        if (error) throw error; // Force the code to jump to the 'catch' block
+        if (error) throw error;
 
         console.log("Success! Data:", data);
         const container = document.getElementById('container')
@@ -82,11 +82,10 @@ async function fetchData() {
 }
 
 
-window.addEventListener('hashchange', async () => { // <--- Added async
+window.addEventListener('hashchange', async () => {
     const hash = window.location.hash;
 
     if (hash === '#upload') {
-        // Check if user is logged in
         const { data: { user } } = await _supabase.auth.getUser();
 
         if (!user) {
@@ -108,9 +107,7 @@ window.addEventListener('hashchange', async () => { // <--- Added async
 });
 
 
-
-// This triggers every time the # in the URL changes
-document.addEventListener('DOMContentLoaded', async () => { // <--- Added async
+document.addEventListener('DOMContentLoaded', async () => {
     const hash = window.location.hash;
 
     if (hash === '#upload') {
@@ -130,6 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => { // <--- Added async
         fetchData();
     }
 });
+
 async function logout() {
     const { error } = await _supabase.auth.signOut();
 
@@ -137,10 +135,11 @@ async function logout() {
         alertPopups(`Error logging out: ${error.message}`);
     } else {
         alertPopups("Logged out successfully!");
-        window.location.hash = ""; // Go back to the home page
-        location.reload(); // Refresh to clear any secure data from memory
+        window.location.hash = "";
+        location.reload();
     }
 }
+
 export async function alertPopups(message) {
     alert.innerHTML = `
     <div class="popup">
@@ -150,30 +149,28 @@ export async function alertPopups(message) {
     `;
     alert.style.display = "block";
 }
+
 function renderContent(post, indexPage) {
     let content = post.Post || '';
     const images = post.Images || [];
 
     if (indexPage) {
-        // On index, splice at first line break or character limit, no images
         const lineBreak = content.indexOf('\n');
         if (lineBreak !== -1) {
             content = content.substring(0, lineBreak) + '...';
         } else if (content.length > postlength) {
             content = content.substring(0, postlength) + '...';
         }
-        // Strip [image] markers from preview
         content = content.replace(/\[image\]/g, '');
         return `<p class="post-content">${content}</p>`;
     }
 
-    // On full post page, replace each [image] marker with the corresponding image
     let imageIndex = 0;
     const parts = content.split('[image]');
     return parts.map((part, i) => {
         const text = part ? `<p class="post-content">${part}</p>` : '';
-        const image = images[imageIndex] 
-            ? `<img class="post-image" src="${images[imageIndex++]}" alt="Blog image ${imageIndex}">` 
+        const image = images[imageIndex]
+            ? `<img class="post-image" src="${images[imageIndex++]}" alt="Blog image ${imageIndex}">`
             : '';
         return text + (i < parts.length - 1 ? image : '');
     }).join('');
@@ -184,11 +181,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const logoutBtn = document.getElementById('signout');
 
     if (user) {
-        logoutBtn.textContent = 'SIGN OUT';
+        logoutBtn.textContent = 'Sign Out';
         logoutBtn.onclick = logout;
     } else {
-        logoutBtn.textContent = 'SIGN IN';
+        logoutBtn.textContent = 'Sign In';
         logoutBtn.onclick = () => { window.location.hash = '#login'; };
     }
 });
-
